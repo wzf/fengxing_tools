@@ -1,0 +1,40 @@
+[
+  {
+    "title": "重命名文件",
+    "description": "制定一个文件目录，填写文件开头，重新命名目录下的文件",
+    "file": "rename_folder.py",
+    "params": [
+      {
+        "name": "folder",
+        "label": "文件目录",
+        "type": "folder",
+        "value": ""
+      },
+      {
+        "name": "prefix",
+        "label": "前缀",
+        "type": "text",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "title": "测试脚本",
+    "file": "E:\\2025study\\08flutter\\flutter01\\fengxing_tools\\scripts\\test.py",
+    "description": "",
+    "params": [
+      {
+        "name": "keywords",
+        "label": "关键字",
+        "type": "text",
+        "value": "123456"
+      },
+      {
+        "name": "remarks",
+        "label": "备注",
+        "type": "text",
+        "value": "2"
+      }
+    ]
+  }
+]
