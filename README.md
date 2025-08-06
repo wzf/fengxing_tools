@@ -25,8 +25,10 @@
 ### 常见问题
 1. flutter pub get总是报错"exit code 69"
 > 设置一下系统变量，添加以下两个，跟path平级，不要添加到path里
-> PUB_HOSTED_URL    https://pub.flutter-io.cn
-> FLUTTER_STORAGE_BASE_URL  https://storage.flutter-io.cn
+```txt
+PUB_HOSTED_URL    https://pub.flutter-io.cn
+FLUTTER_STORAGE_BASE_URL  https://storage.flutter-io.cn
+```
 
 执行以下命令
 ```dart
