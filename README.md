@@ -22,5 +22,17 @@
 1. 工程下有个scripts目录，将来我的脚本会同步更新，也欢迎大家提交脚本。
 2. test.py用来测试的，没有实际用途。
 
+### 常见问题
+1. flutter pub get总是报错"exit code 69"
+> 设置一下系统变量，添加以下两个，跟path平级，不要添加到path里
+> PUB_HOSTED_URL    https://pub.flutter-io.cn
+> FLUTTER_STORAGE_BASE_URL  https://storage.flutter-io.cn
+
+执行以下命令
+```dart
+flutter clean
+flutter pub get
+```
+
 ### 联系我
 158712444@qq.com

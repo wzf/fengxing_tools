@@ -12,7 +12,7 @@ void main() async {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
     // 设置窗口标题
-    windowManager.setTitle('峰行工具箱'); 
+    windowManager.setTitle('峰行工具箱');
     // 设置窗口初始大小，例如宽1200高800
     await windowManager.setSize(const Size(1560, 860));
     // 可选：设置窗口最小尺寸
@@ -62,6 +62,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<dynamic> scriptList = [];
   int? selectedIndex; // 当前选中的脚本索引
+  int menuIndex = 0; // 当前选中的菜单索引，0=脚本
 
   // 新增：新增或编辑脚本方法
   Future<void> addOrUpdateScript([Map<String, dynamic>? script]) async {
@@ -83,18 +84,19 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
     if (result != null) {
-      setState(() {
-        if (script == null) {
-          // 新增
-          scriptList.add(result);
-        } else {
-          // 编辑
-          final idx = scriptList.indexOf(script);
-          if (idx != -1) {
-            scriptList[idx] = result;
-          }
-        }
-      });
+      loadScripts(); // 刷新脚本列表
+      // setState(() {
+      //   if (script == null) {
+      //     // 新增
+      //     scriptList.add(result);
+      //   } else {
+      //     // 编辑
+      //     final idx = scriptList.indexOf(script);
+      //     if (idx != -1) {
+      //       scriptList[idx] = result;
+      //     }
+      //   }
+      // });
     }
   }
 
@@ -106,11 +108,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> loadScripts() async {
-    final String jsonStr = await rootBundle.loadString('data/scripts.json');
-    final List<dynamic> data = json.decode(jsonStr);
+    String jsonStr;
+    final file = File('data/scripts.json');
+    if (await file.exists()) {
+      jsonStr = await file.readAsString();
+    } else {
+      jsonStr = await rootBundle.loadString('data/scripts.json');
+    }
+    List<dynamic> data = json.decode(jsonStr);
     log.info('Loaded scripts: $data'); // 使用log打印
+    int? iSelectedIndex = selectedIndex;
+    if (iSelectedIndex != null && iSelectedIndex >= data.length) {
+      iSelectedIndex = null; // 如果之前的索引超出范围，重置为null
+    }
     setState(() {
       scriptList = data;
+      selectedIndex = iSelectedIndex;
     });
   }
 
@@ -133,19 +146,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       Tooltip(
                         message: '脚本',
-                        child: IconButton(
-                          icon: const Icon(Icons.code),
-                          iconSize: 32,
-                          color: Colors.white,
-                          focusColor: Color.fromARGB(255, 28, 252, 121),
-                          onPressed: () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: menuIndex == 0
+                                ? Colors.white24
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.code_outlined,
+                              color: menuIndex == 0
+                                  ? const Color.fromARGB(255, 28, 252, 121)
+                                  : Colors.white,
+                            ),
+                            iconSize: 28,
+                            highlightColor: Colors.white54,
+                            isSelected: menuIndex == 0,
+                            onPressed: () {
+                              setState(() {
+                                menuIndex = 0;
+                                selectedIndex = null;
+                              });
+                              loadScripts(); // 刷新脚本列表
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Tooltip(
                         message: '新增脚本',
                         child: IconButton(
-                          icon: const Icon(Icons.add),
+                          icon: const Icon(Icons.add_outlined),
                           iconSize: 28,
                           color: Colors.white,
                           focusColor: Color.fromARGB(255, 28, 252, 121),
@@ -164,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Tooltip(
                         message: '设置',
                         child: IconButton(
-                          icon: const Icon(Icons.settings),
+                          icon: const Icon(Icons.settings_outlined),
                           iconSize: 28,
                           color: Colors.white,
                           focusColor: Color.fromARGB(255, 28, 252, 121),
@@ -175,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Tooltip(
                         message: '更多',
                         child: IconButton(
-                          icon: const Icon(Icons.more_vert),
+                          icon: const Icon(Icons.more_vert_outlined),
                           iconSize: 28,
                           color: Colors.white,
                           focusColor: Color.fromARGB(255, 28, 252, 121),
@@ -206,14 +238,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
+                            horizontal: 8,
+                            vertical: 4,
                           ),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: selectedIndex == index
                                 ? Colors.white
-                                : Colors.grey[200],
+                                : Colors.grey[50],
                             borderRadius: BorderRadius.circular(8),
                             border: selectedIndex == index
                                 ? Border.all(color: Colors.deepPurple, width: 2)
@@ -261,6 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onEdit: () => addOrUpdateScript(
                         scriptList[selectedIndex!],
                       ), // 传递编辑方法
+                      onRefresh: loadScripts, // 刷新脚本列表
                     ),
             ),
           ),

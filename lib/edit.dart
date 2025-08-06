@@ -288,6 +288,7 @@ class _EditScriptPageState extends State<EditScriptPage> {
                 ElevatedButton(
                   onPressed: () async {
                     final script = {
+                      'id': widget.script?['id'] ?? DateTime.now().millisecondsSinceEpoch, // 新增ID
                       'title': titleController.text,
                       'file': fileController.text,
                       'description': descController.text,
