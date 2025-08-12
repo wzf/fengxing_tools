@@ -28,10 +28,11 @@
 ### 脚本合集
 1. 工程下有个scripts目录，将来我的脚本会同步更新，也欢迎大家提交脚本。
 2. test.py用来测试的，没有实际用途。
-| 名称        | 描述                          | 文件路径               |
-|-------------|-----------------------------|-----------------------|
-| rename.py | 重命名某个文件夹下的文件        | /scripts/file_rename/rename.py  |
-| resize.py | 压缩图片，改变尺寸        | /scripts/image_resize/resize.py  |
+
+|名称|描述|文件路径|
+|---|---|---|
+|rename.py|重命名某个文件夹下的文件|/scripts/file_rename/rename.py|
+|resize.py|压缩图片，改变尺寸|/scripts/image_resize/resize.py|
 
 
 ### 常见问题
