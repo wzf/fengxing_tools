@@ -227,34 +227,65 @@ class _DetailWidgetState extends State<DetailWidget> {
                                   horizontal: 12,
                                 ),
                               ),
-                              onChanged: (v) {},
-                            )
-                          : GestureDetector(
-                              onTap: () async {
-                                String? folder = await FilePicker.platform
-                                    .getDirectoryPath();
-                                if (folder != null) {
-                                  controllers[name]?.text = folder;
-                                  setState(() {});
-                                }
+                              onChanged: (v) {
+                                param['value'] = v; // 实时同步
                               },
-                              child: Container(
-                                height: 32,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4),
+                            )
+                          : type == 'folder'
+                            ? GestureDetector(
+                                onTap: () async {
+                                  String? folder = await FilePicker.platform
+                                      .getDirectoryPath();
+                                  if (folder != null) {
+                                    controllers[name]?.text = folder;
+                                    param['value'] = folder; // 立即同步到参数
+                                    setState(() {});
+                                  }
+                                },
+                                child: Container(
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  child: Text(
+                                    controllers[name]?.text ?? '',
+                                    style: const TextStyle(fontSize: 15),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                                child: Text(
-                                  controllers[name]?.text ?? '',
-                                  style: const TextStyle(fontSize: 15),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
+                              )
+                              : type == 'file'
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      FilePickerResult? result = await FilePicker.platform.pickFiles();
+                                      if (result != null && result.files.isNotEmpty) {
+                                        String filePath = result.files.single.path ?? '';
+                                        controllers[name]?.text = filePath;
+                                        param['value'] = filePath;
+                                        setState(() {});
+                                      }
+                                    },
+                                    child: Container(
+                                      height: 32,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      child: Text(
+                                        controllers[name]?.text ?? '',
+                                        style: const TextStyle(fontSize: 15),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                     ),
                   ],
                 ),
@@ -380,7 +411,8 @@ class _DetailWidgetState extends State<DetailWidget> {
       final params = widget.script['params'] as List<dynamic>? ?? [];
       for (var param in params) {
         final name = param['name'];
-        final value = paramValues[name] ?? '';
+        args.add("-$name");
+        final value = param['value'] ?? '';
         args.add(value);
       }
       // 调用python脚本

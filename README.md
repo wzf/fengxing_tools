@@ -15,12 +15,24 @@
 ![编辑脚本](./images/2.jpg)
 ![运行窗口](./images/3.jpg)
 
+### 如何使用
+1. 下载release版本
+2. 解压缩到本地某个文件夹内，比如是D:\Program Files\fengxing_tools
+3. 双击fengxing_tools.exe即可运行
+4. 可以将本项目的scripts文件夹复制到D:\Program Files\fengxing_tools\下，并且按照文件夹内的说明文档进行配置
+5. 也可以在打开软件以后，点击左侧的+号，配置自己的脚本
+
 ### 关于升级计划
 没有明确的升级计划，想到了再说
 
 ### 脚本合集
 1. 工程下有个scripts目录，将来我的脚本会同步更新，也欢迎大家提交脚本。
 2. test.py用来测试的，没有实际用途。
+| 名称        | 描述                          | 文件路径               |
+|-------------|-----------------------------|-----------------------|
+| rename.py | 重命名某个文件夹下的文件        | /scripts/file_rename/rename.py  |
+| resize.py | 压缩图片，改变尺寸        | /scripts/image_resize/resize.py  |
+
 
 ### 常见问题
 1. flutter pub get总是报错"exit code 69"

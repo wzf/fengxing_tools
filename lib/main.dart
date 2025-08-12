@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 import 'package:window_manager/window_manager.dart';
 import 'detail.dart';
 import 'edit.dart';
@@ -85,18 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     if (result != null) {
       loadScripts(); // 刷新脚本列表
-      // setState(() {
-      //   if (script == null) {
-      //     // 新增
-      //     scriptList.add(result);
-      //   } else {
-      //     // 编辑
-      //     final idx = scriptList.indexOf(script);
-      //     if (idx != -1) {
-      //       scriptList[idx] = result;
-      //     }
-      //   }
-      // });
     }
   }
 
@@ -107,14 +95,22 @@ class _MyHomePageState extends State<MyHomePage> {
     loadScripts();
   }
 
-  Future<void> loadScripts() async {
-    String jsonStr;
-    final file = File('data/scripts.json');
-    if (await file.exists()) {
-      jsonStr = await file.readAsString();
-    } else {
-      jsonStr = await rootBundle.loadString('data/scripts.json');
+  String getDataFilePath() {
+    final docDir = Directory('${Directory.current.path}/config');
+    if (!docDir.existsSync()) {
+      docDir.createSync(recursive: true);
     }
+    return p.join(docDir.path, 'scripts.json');
+  }
+
+  Future<void> loadScripts() async {
+    final filePath = getDataFilePath();
+    final file = File(filePath);
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      await file.writeAsString('[]');
+    }
+    String jsonStr = await file.readAsString();
     List<dynamic> data = json.decode(jsonStr);
     log.info('Loaded scripts: $data'); // 使用log打印
     int? iSelectedIndex = selectedIndex;
@@ -225,7 +221,13 @@ class _MyHomePageState extends State<MyHomePage> {
             width: 360,
             color: Colors.grey[300],
             child: scriptList.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: Text(
+                      '当前没有配置任何脚本，\n点击左侧+号，创建脚本',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
                 : ListView.builder(
                     itemCount: scriptList.length,
                     itemBuilder: (context, index) {

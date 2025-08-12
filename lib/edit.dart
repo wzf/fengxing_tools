@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
 
 class EditScriptPage extends StatefulWidget {
   final Map<String, dynamic>? script; // 传入为null表示新增，否则为编辑
@@ -50,8 +51,16 @@ class _EditScriptPageState extends State<EditScriptPage> {
     super.dispose();
   }
 
+  String getDataFilePath() {
+    final docDir = Directory('${Directory.current.path}/config');
+    if (!docDir.existsSync()) {
+      docDir.createSync(recursive: true);
+    }
+    return p.join(docDir.path, 'scripts.json');
+  }
+
   Future<void> saveToJsonFile(Map<String, dynamic> script) async {
-    final filePath = 'data/scripts.json';
+    final filePath = getDataFilePath();
     // 1. 读取原有数据
     List<dynamic> scripts = [];
     try {
@@ -241,9 +250,9 @@ class _EditScriptPageState extends State<EditScriptPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: DropdownButtonFormField<String>(
-                            value: params[idx]['type'] == 'folder'
-                                ? 'folder'
-                                : 'text',
+                            value: params[idx]['type'] == 'folder' ? 
+                                'folder' : params[idx]['type'] == 'file' ? 
+                                'file' : 'text',
                             items: const [
                               DropdownMenuItem(
                                 value: 'text',
@@ -252,6 +261,10 @@ class _EditScriptPageState extends State<EditScriptPage> {
                               DropdownMenuItem(
                                 value: 'folder',
                                 child: Text('folder'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'file',
+                                child: Text('file'),
                               ),
                             ],
                             onChanged: (v) => setState(

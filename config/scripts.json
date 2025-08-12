@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1754492281003,
+    "title": "测试脚本",
+    "file": "E:\\2025study\\08flutter\\flutter01\\fengxing_tools\\scripts\\test.py",
+    "description": "",
+    "params": [
+      {
+        "name": "keywords",
+        "label": "关键字",
+        "type": "text",
+        "value": "123456"
+      },
+      {
+        "name": "remarks",
+        "label": "备注",
+        "type": "text",
+        "value": "2"
+      }
+    ]
+  },
+  {
+    "id": 1755003859420,
+    "title": "文件夹重命名",
+    "file": "D:\\2025IP\\fengxing_tools\\scripts\\file_rename\\rename.py",
+    "description": "",
+    "params": [
+      {
+        "name": "directory",
+        "label": "文件夹",
+        "type": "folder"
+      },
+      {
+        "name": "prefix",
+        "label": "文件前缀",
+        "type": "text"
+      },
+      {
+        "name": "start_num",
+        "label": "起始数字",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "id": 1755006159413,
+    "title": "图片缩放",
+    "file": "D:\\2025IP\\fengxing_tools\\scripts\\image_resize\\resize.py",
+    "description": "",
+    "params": [
+      {
+        "name": "input_path",
+        "label": "图片",
+        "type": "file",
+        "value": "C:\\Users\\admin\\Downloads\\1111.png"
+      },
+      {
+        "name": "width",
+        "label": "宽度",
+        "type": "text",
+        "value": "108"
+      },
+      {
+        "name": "height",
+        "label": "高度",
+        "type": "text",
+        "value": "108"
+      },
+      {
+        "name": "quality",
+        "label": "压缩质量",
+        "type": "text",
+        "value": "0.9"
+      },
+      {
+        "name": "output_suffix",
+        "label": "新文件后缀名",
+        "type": "text",
+        "value": "_s"
+      }
+    ]
+  }
+]
