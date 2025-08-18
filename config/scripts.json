@@ -79,5 +79,18 @@
         "value": "_s"
       }
     ]
+  },
+  {
+    "id": 1755521622191,
+    "title": "二维码解码",
+    "file": "D:\\Program Files\\fengxing_tools\\scripts\\barcode\\barcode_de.py",
+    "description": "",
+    "params": [
+      {
+        "name": "file",
+        "label": "二维码图片",
+        "type": "file"
+      }
+    ]
   }
 ]
