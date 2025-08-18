@@ -33,6 +33,7 @@
 |---|---|---|
 |rename.py|重命名某个文件夹下的文件|/scripts/file_rename/rename.py|
 |resize.py|压缩图片，改变尺寸|/scripts/image_resize/resize.py|
+|barcode_de.py|二维码图片解码|/scripts/barcode/barcode_de.py|
 
 
 ### 常见问题
