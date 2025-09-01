@@ -92,5 +92,19 @@
         "type": "file"
       }
     ]
+  },
+  {
+    "id": 1756691547798,
+    "title": "微信批量发送消息",
+    "file": "E:\\2025AIIP\\fengxing_tools\\scripts\\wexin_tools\\send.py",
+    "description": "",
+    "params": [
+      {
+        "name": "message_file",
+        "label": "消息配置文件",
+        "type": "file",
+        "value": "E:\\2025AIIP\\fengxing_tools\\scripts\\wexin_tools\\message.xlsx"
+      }
+    ]
   }
 ]

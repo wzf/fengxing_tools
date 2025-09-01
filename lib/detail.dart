@@ -2,12 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as p;
 
 class DetailWidget extends StatefulWidget {
   final Map script;
   final VoidCallback? onEdit; // 新增：编辑回调
   final VoidCallback? onRefresh; // 刷新：编辑回调
-  const DetailWidget({super.key, required this.script, this.onEdit, this.onRefresh});
+  const DetailWidget({
+    super.key,
+    required this.script,
+    this.onEdit,
+    this.onRefresh,
+  });
 
   @override
   State<DetailWidget> createState() => _DetailWidgetState();
@@ -45,6 +51,14 @@ class _DetailWidgetState extends State<DetailWidget> {
     }
   }
 
+  String getDataFilePath() {
+    final docDir = Directory('${Directory.current.path}/config');
+    if (!docDir.existsSync()) {
+      docDir.createSync(recursive: true);
+    }
+    return p.join(docDir.path, 'scripts.json');
+  }
+
   // 删除按钮
   Future<void> _onDeletePressed() async {
     final confirm = await showDialog<bool>(
@@ -64,9 +78,10 @@ class _DetailWidgetState extends State<DetailWidget> {
         ],
       ),
     );
+
     // 点击确定后，更新本地存储
     if (confirm == true) {
-      final filePath = 'data/scripts.json';
+      final filePath = getDataFilePath();
       List<dynamic> scripts = [];
       try {
         final file = File(filePath);
@@ -77,18 +92,16 @@ class _DetailWidgetState extends State<DetailWidget> {
       } catch (e) {
         scripts = [];
       }
-      scripts.removeWhere((item) =>
-        item['id'] == widget.script['id']
-      );
+      scripts.removeWhere((item) => item['id'] == widget.script['id']);
       final file = File(filePath);
       await file.writeAsString(
         const JsonEncoder.withIndent('  ').convert(scripts),
       );
       if (mounted) {
         widget.onRefresh?.call(); // 调用刷新回调
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('已删除')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('已删除')));
         Navigator.of(context).maybePop();
       }
     }
@@ -232,60 +245,65 @@ class _DetailWidgetState extends State<DetailWidget> {
                               },
                             )
                           : type == 'folder'
-                            ? GestureDetector(
-                                onTap: () async {
-                                  String? folder = await FilePicker.platform
-                                      .getDirectoryPath();
-                                  if (folder != null) {
-                                    controllers[name]?.text = folder;
-                                    param['value'] = folder; // 立即同步到参数
-                                    setState(() {});
-                                  }
-                                },
-                                child: Container(
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                  ),
-                                  child: Text(
-                                    controllers[name]?.text ?? '',
-                                    style: const TextStyle(fontSize: 15),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                          ? GestureDetector(
+                              onTap: () async {
+                                String? folder = await FilePicker.platform
+                                    .getDirectoryPath();
+                                if (folder != null) {
+                                  controllers[name]?.text = folder;
+                                  param['value'] = folder; // 立即同步到参数
+                                  setState(() {});
+                                }
+                              },
+                              child: Container(
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
-                              )
-                              : type == 'file'
-                                ? GestureDetector(
-                                    onTap: () async {
-                                      FilePickerResult? result = await FilePicker.platform.pickFiles();
-                                      if (result != null && result.files.isNotEmpty) {
-                                        String filePath = result.files.single.path ?? '';
-                                        controllers[name]?.text = filePath;
-                                        param['value'] = filePath;
-                                        setState(() {});
-                                      }
-                                    },
-                                    child: Container(
-                                      height: 32,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                                      child: Text(
-                                        controllers[name]?.text ?? '',
-                                        style: const TextStyle(fontSize: 15),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(
+                                  controllers[name]?.text ?? '',
+                                  style: const TextStyle(fontSize: 15),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                          : type == 'file'
+                          ? GestureDetector(
+                              onTap: () async {
+                                FilePickerResult? result = await FilePicker
+                                    .platform
+                                    .pickFiles();
+                                if (result != null && result.files.isNotEmpty) {
+                                  String filePath =
+                                      result.files.single.path ?? '';
+                                  controllers[name]?.text = filePath;
+                                  param['value'] = filePath;
+                                  setState(() {});
+                                }
+                              },
+                              child: Container(
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(
+                                  controllers[name]?.text ?? '',
+                                  style: const TextStyle(fontSize: 15),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
                     ),
                   ],
                 ),
@@ -304,7 +322,7 @@ class _DetailWidgetState extends State<DetailWidget> {
                   param['value'] = controllers[param['name']]?.text ?? '';
                 }
                 // 2. 读取原有脚本数据
-                final filePath = 'data/scripts.json';
+                final filePath = getDataFilePath();
                 List<dynamic> scripts = [];
                 try {
                   final file = File(filePath);
