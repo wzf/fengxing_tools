@@ -34,6 +34,7 @@
 |rename.py|重命名某个文件夹下的文件|/scripts/file_rename/rename.py|
 |resize.py|压缩图片，改变尺寸|/scripts/image_resize/resize.py|
 |barcode_de.py|二维码图片解码|/scripts/barcode/barcode_de.py|
+|send.py|微信消息发送|/scripts/wexin_tools/send.py|
 
 
 ### 常见问题
@@ -50,5 +51,9 @@ flutter clean
 flutter pub get
 ```
 
+2. 如何在本地打包
+```dart
+flutter build windows
+```
 ### 联系我
 158712444@qq.com
