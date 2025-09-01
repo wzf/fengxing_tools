@@ -4,6 +4,13 @@ import openpyxl
 from wxauto import WeChat
 import time
 
+if sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+
+# if os.name == "nt":
+#     import io
+#     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    
 def main(params):
     """
     发送微信消息
@@ -16,6 +23,8 @@ def main(params):
     try:
         # 读取消息配置文件
         messages = read_messages(message_file)
+        if (messages == None):
+            return
         
         # 循环messages，调用SendMsg进行发送
         wx = WeChat()
@@ -27,12 +36,12 @@ def main(params):
             # 文本消息
             if msgType == 'text':
                 wx.SendMsg(msg=msg, who=who)
-                print(f"\n已发送: {item}")
+                # print(f"\n已发送: {item}")
                 time.sleep(delay)
             # 文件：如图片、PDF、Word等
             elif msgType == 'file':
                 wx.SendFiles(filepath=msg, who=who)
-                print(f"\n已发送: {item}")
+                # print(f"\n已发送: {item}")
                 time.sleep(delay)
         
         print(f"\n完成")
@@ -44,8 +53,11 @@ def main(params):
 # 读取配置文件
 def read_messages(message_file):
     try:
+        wb = None
+        ws = None
         # 获取message_file对应的文件，如"D:\message.xlsx"
-        wb = openpyxl.load_workbook(message_file)
+        # with open(message_file, 'rb') as f:
+        wb = openpyxl.load_workbook(message_file, read_only=True, rich_text=True)
         ws = wb.active
 
         # 读取表格第二行的A列到D列，这里放到是字段定义
@@ -73,15 +85,15 @@ def read_messages(message_file):
             messages.append(row_data)
             row += 1
 
-        print("字段定义:", column_keys)
-        print("消息内容:")
+        # print("字段定义:", column_keys)
+        # print("消息内容:")
         for msg in messages:
             print(msg)
-        print(f"\n完成")
+        # print(f"\n完成")
         return messages
 
     except Exception as e:
-        print(f"发生错误: {e}")
+        print(f"读取配置文件时发生错误: {e}")
 
 # 参数转换
 def parse_args_to_dict():

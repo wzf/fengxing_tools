@@ -438,12 +438,12 @@ class _DetailWidgetState extends State<DetailWidget> {
         scriptFile,
         ...args,
       ], runInShell: true);
-      process.stdout.transform(SystemEncoding().decoder).listen((data) {
+      process.stdout.transform(utf8.decoder).listen((data) {
         setState(() {
           runOutput += data;
         });
       });
-      process.stderr.transform(SystemEncoding().decoder).listen((data) {
+      process.stderr.transform(utf8.decoder).listen((data) {
         setState(() {
           runOutput += data;
         });
